@@ -25,9 +25,9 @@ validacao_dados = X[tamanho_de_treino:]
 validacao_marcacoes = Y[tamanho_de_treino:]
 
 def fit_and_predict(nome, modelo, treino_dados, treino_marcacoes):
-    k = 10
-    scores = cross_val_score(modelo, treino_dados, treino_marcacoes, cv = k)
-    taxa_de_acerto = np.mean(scores)
+    k = 10 #Quantidade de 'folds' (dobras/quebras) nos dados para fazer o treino
+    scores = cross_val_score(modelo, treino_dados, treino_marcacoes, cv = k) #Essa classe faz os cálculos dos 'kfolds'
+    taxa_de_acerto = np.mean(scores) #Mean devolve a média desses resultados que é usada a partir de então
     msg = "Taxa de acerto do {0}: {1}".format(nome, taxa_de_acerto)
     print(msg)
     return taxa_de_acerto
