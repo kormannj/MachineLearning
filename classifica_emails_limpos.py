@@ -36,7 +36,7 @@ def teste_real(modelo, validacao_dados, validacao_marcacoes):
 
 conteudo_arquivo = pd.read_csv(r"C:\Users\Usuario\Desktop\Machine_Learning\entrada_emails.csv")
 textos_emails = conteudo_arquivo['email'] #Função do Pandas que pega o dataframe 'email'
-textos_quebrados = textos_emails.str.lower().str.split(' ') #Função do Pandas que, a cada ' ' da string, faz uma quebra com ','
+textos_quebrados = textos_emails.str.lower().str.split(' ') #Função do Pandas que, a cada ' ' da string, faz uma quebra com ','. Também usamos o lower para transformar tudo para minúsculo, evitando duplicidade de palavras.
 
 dicionario = set() #Dicionário é um set, ou seja, um conjunto que não permite itens repetidos
 
@@ -45,7 +45,7 @@ for lista in textos_quebrados: #Percorro o array completo
 
 numero_de_palavras = len(dicionario)
 tuplas = zip(dicionario, range(numero_de_palavras)) #Estou associando cada palavra ao número de sua posição na lista
-tradutor = {palavra:indice for palavra, indice in tuplas} #Crei um dicionário (representado pelos {}). Com isso consigo pesquisar por uma string e saber em qual posição está.
+tradutor = {palavra:indice for palavra, indice in tuplas} #Criei um dicionário (representado pelos {}). Com isso consigo pesquisar por uma string e saber em qual posição está.
 
 vetores_de_texto = [vetorizar_texto(texto, tradutor) for texto in textos_quebrados] #Estou lendo todos os e-mails e transformando em vetores, com as quantidades de palavras contadas.
 marcas = conteudo_arquivo['classificacao'] #Função do Pandas que pega o dataframe 'classificacao'
