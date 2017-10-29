@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from collections import Counter
 from sklearn.model_selection import cross_val_score
+import nltk
+#nltk.download('stopwords')
 
 def vetorizar_texto(texto, tradutor):
     vetor = [0] * len(tradutor) #Criei um vetor com várias posições, todas iniciadas com 0
@@ -37,6 +39,7 @@ def teste_real(modelo, validacao_dados, validacao_marcacoes):
 conteudo_arquivo = pd.read_csv(r"C:\Users\Usuario\Desktop\Machine_Learning\entrada_emails.csv")
 textos_emails = conteudo_arquivo['email'] #Função do Pandas que pega o dataframe 'email'
 textos_quebrados = textos_emails.str.lower().str.split(' ') #Função do Pandas que, a cada ' ' da string, faz uma quebra com ','. Também usamos o lower para transformar tudo para minúsculo, evitando duplicidade de palavras.
+stop_words = nltk.corpus.stopwords.words('portuguese')
 
 dicionario = set() #Dicionário é um set, ou seja, um conjunto que não permite itens repetidos
 
