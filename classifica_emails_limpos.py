@@ -4,14 +4,18 @@ from collections import Counter
 from sklearn.model_selection import cross_val_score
 import nltk
 #nltk.download('stopwords')
+#nltk.download('rslp') #biblioteca Stemmer, que pega a raiz das palavras -- RSLP = Removedor de Sufixo da Língua Portuguesa
+#nltk.download('punkt') #biblioteca para separar as palavras descartando as pontuações.
 
 def vetorizar_texto(texto, tradutor):
     vetor = [0] * len(tradutor) #Criei um vetor com várias posições, todas iniciadas com 0
 
     for palavra in texto:
-        if palavra in tradutor:
-            posicao = tradutor[palavra]
-            vetor[posicao] += 1
+        if len(palavra) > 0:
+            raiz = stemmer.stem(palavra)
+            if raiz in tradutor:
+                posicao = tradutor[raiz]
+                vetor[posicao] += 1
 
     return vetor
 
@@ -38,17 +42,24 @@ def teste_real(modelo, validacao_dados, validacao_marcacoes):
 
 conteudo_arquivo = pd.read_csv(r"C:\Users\Usuario\Desktop\Machine_Learning\entrada_emails.csv")
 textos_emails = conteudo_arquivo['email'] #Função do Pandas que pega o dataframe 'email'
-textos_quebrados = textos_emails.str.lower().str.split(' ') #Função do Pandas que, a cada ' ' da string, faz uma quebra com ','. Também usamos o lower para transformar tudo para minúsculo, evitando duplicidade de palavras.
-stop_words = nltk.corpus.stopwords.words('portuguese')
+#textos_quebrados = textos_emails.str.lower().str.split(' ') #Função do Pandas que, a cada ' ' da string, faz uma quebra com ','. Também usamos o lower para transformar tudo para minúsculo, evitando duplicidade de palavras.
+frases = textos_emails.str.lower()
+textos_quebrados = [nltk.tokenize.word_tokenize(frase) for frase in frases]
+stopwords = nltk.corpus.stopwords.words('portuguese')
+stemmer = nltk.stem.RSLPStemmer()
 
 dicionario = set() #Dicionário é um set, ou seja, um conjunto que não permite itens repetidos
 
 for lista in textos_quebrados: #Percorro o array completo
-    dicionario.update(lista)
+    validas = [stemmer.stem(palavra) for palavra in lista if palavra not in stopwords and len(palavra) > 2] #Descartamos palavras até dois caracteres. Com isso pontuações são desconsideradas, bem como espaços em branco.
+    dicionario.update(validas)
+
+print(dicionario)
 
 numero_de_palavras = len(dicionario)
 tuplas = zip(dicionario, range(numero_de_palavras)) #Estou associando cada palavra ao número de sua posição na lista
 tradutor = {palavra:indice for palavra, indice in tuplas} #Criei um dicionário (representado pelos {}). Com isso consigo pesquisar por uma string e saber em qual posição está.
+print('Quantidade de palavras no dicionário: {}'.format(numero_de_palavras))
 
 vetores_de_texto = [vetorizar_texto(texto, tradutor) for texto in textos_quebrados] #Estou lendo todos os e-mails e transformando em vetores, com as quantidades de palavras contadas.
 marcas = conteudo_arquivo['classificacao'] #Função do Pandas que pega o dataframe 'classificacao'
